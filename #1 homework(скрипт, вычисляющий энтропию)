@@ -1,0 +1,37 @@
+let fs = require('fs');
+let arg = process.argv;
+let s;
+
+fs.readFile(arg[2], (err, data) => {
+	if (err) {
+		console.error(err);
+		return;
+	}	
+	s = data.toString();
+
+	if (s.length == 0) {
+		console.log("File is empty...");
+		return;
+	}
+
+	let alph = new Array();
+
+	for (let i in s){
+		if (!alph[s.charAt(i)])
+			alph[s.charAt(i)] = 0;
+		alph[s.charAt(i)]++;
+	}
+
+	let h = 0;
+	let n = 0;
+
+	for (let i in alph){
+		alph[i] /= s.length;
+		n++;
+	}
+
+	for (let i in alph)
+		h -= alph[i] * Math.log2(alph[i]) / Math.log2(n);
+
+	console.log(h);
+});
