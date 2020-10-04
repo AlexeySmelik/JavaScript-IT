@@ -30,8 +30,13 @@ fs.readFile(arg[2], (err, data) => {
 		n++;
 	}
 
-	for (let i in alph)
-		h -= alph[i] * Math.log2(alph[i]) / Math.log2(n);
+	if (n != 1){
+		for (let i in alph)
+			h -= alph[i] * Math.log2(alph[i]) / Math.log2(n);
+	}
+	else{
+		h++;
+	}
 
 	console.log(h);
 });
