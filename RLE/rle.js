@@ -1,5 +1,11 @@
 let fs = require('fs');
 let arg = process.argv;
+const numSymbols = 255;
+
+if (arg.length != 5){
+	console.log('Not enought arguments...');
+	return;
+}
 
 let code = (inText) => {
 	let i = 0, n = 1, outText = '';
@@ -8,9 +14,9 @@ let code = (inText) => {
 			n++;
 		let nJump = n;
 	
-		while (n >= 127){
-			outText += '#' + String.fromCharCode(127) + inText.charAt(i);
-			n -= 127;
+		while (n >= numSymbols){
+			outText += '#' + String.fromCharCode(numSymbols) + inText.charAt(i);
+			n -= numSymbols;
 		}
 	
 		if ((n > 3) || (inText.charAt(i) == '#')){
@@ -28,7 +34,7 @@ let code = (inText) => {
 
 let decode = (inText) => {
 	let alph = '';
-	for (let i = 0; i < 127; i++)
+	for (let i = 0; i <= numSymbols; i++)
 		alph += String.fromCharCode(i);
 	
 	let i = 0, outText = '';
@@ -51,7 +57,7 @@ fs.readFile(arg[3], (err, data) => {
 		return;
 	}
 	
-	let inText = data.toString();
+	let inText = data.toString('utf-8');
 	if (inText == ''){
 		console.log(`"${arg[3]}" is empty...`);
 		return;
