@@ -52,6 +52,10 @@ fs.readFile(arg[3], (err, data) => {
 	}
 	
 	let inText = data.toString();
+	if (inText == ''){
+		console.log(`"${arg[3]}" is empty...`);
+		return;
+	}
 	let outText;
 
 	if (arg[2] == 'code')
