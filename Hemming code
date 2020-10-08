@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>Hemming code</title>
+        <script>
+            function code(){
+                let mes = document.getElementById('inpMessage').value.split('');
+                let r0 = (1 * mes[0] + 1 * mes[1] + 1 * mes[3]) % 2;
+                let r1 = (1 * mes[0] + 1 * mes[2] + 1 * mes[3]) % 2;
+                let r2 = (1 * mes[1] + 1 * mes[2] + 1 * mes[3]) % 2;
+                document.getElementById('codedMessage').value = r0.toString() + r1 + mes[0] + r2 + mes[1] + mes[2] + mes[3];
+            }
+
+            function decode(){
+                let mes = document.getElementById('codedMessage').value.split('');
+                for(let i = 0; i < mes.length; i++) mes[i] *= 1;
+                let isSave = true;
+                let r0 = (1 * mes[0] + 1 * mes[2] + 1 * mes[4] + 1 * mes[6]) % 2;
+                let r1 = (1 * mes[1] + 1 * mes[2] + 1 * mes[5] + 1 * mes[6]) % 2;
+                let r2 = (1 * mes[3] + 1 * mes[4] + 1 * mes[6] + 1 * mes[5]) % 2;
+                if (r0 != 0 * 1 || r1 != 0 * 1 || r2 != 0 * 1)
+                    isSave = false;
+                // mask r0 = 1 1 0 1; r1 = 1 0 1 1; r2 = 0 1 1 1;
+                if (isSave){
+                    document.getElementById('placeForError').textContent = 'no error';
+                    document.getElementById('decodedMessage').value = [mes[2], mes[4], mes[5], mes[6]].join('');
+                } else {
+                    let maybeMis = [1, 1, 1, 1, 1, 1, 1];
+                    if (r0 == 0){
+                        maybeMis[0] = 0;
+                        maybeMis[2] = 0;
+                        maybeMis[4] = 0;
+                        maybeMis[6] = 0;
+                    }
+                    if (r1 == 0){
+                        maybeMis[1] = 0;
+                        maybeMis[2] = 0;
+                        maybeMis[5] = 0;
+                        maybeMis[6] = 0;
+                    }
+                    if (r2 == 0){
+                        maybeMis[3] = 0;
+                        maybeMis[4] = 0;
+                        maybeMis[5] = 0;
+                        maybeMis[6] = 0;
+                    }
+                    if (r0 == 1){
+                        maybeMis[1] = 0;
+                        maybeMis[3] = 0;
+                        maybeMis[5] = 0;
+                    }
+                    if (r1 == 1){
+                        maybeMis[0] = 0;
+                        maybeMis[3] = 0;
+                        maybeMis[4] = 0;
+                    }
+                    if (r2 == 1){
+                        maybeMis[0] = 0;
+                        maybeMis[1] = 0;
+                        maybeMis[2] = 0;
+                    }
+                    document.getElementById('placeForError').textContent = `error on position number ${maybeMis.indexOf(1) + 1}`;
+                    mes[maybeMis.indexOf(1)] = (mes[maybeMis.indexOf(1)] + 1) % 2;
+                    document.getElementById('decodedMessage').value = [mes[2], mes[4], mes[5], mes[6]].join('');
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Hemming code</h1>
+        <p> <input type='text' id='inpMessage' maxlength='4'> Type the message </p>
+        <p> <input type='button' value='code' onClick='code()'> </p>
+        <p> <input type='text' id='codedMessage'> Coded message </p>
+        <p> <input type='button' value='decode' onClick='decode()'> </p>
+        <p> <input type='text' id='decodedMessage'> Decoded message </p>
+        <p> <span id='placeForError'> </span> </p>
+    </body>
+</html>
