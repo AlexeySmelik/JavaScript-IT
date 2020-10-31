@@ -17,12 +17,11 @@ for(let i = 0; i < str.length; i++)
 for(let i = 0; i < str.length; i++) 
     alph [str.charAt(i)]++;
 for(i in alph){
-	let newNode = new Node(i, alph[i], 0, null, '');
+	let newNode = new Node(i, alph[i], false, null, '');
 	tree.push(newNode);
 }
 
 let treeLength = tree.length;
-	
 for (let i = 0; i < treeLength - 1; i++){
 	let minInd1 = -1;
 	let minInd2 = -1;
@@ -51,12 +50,16 @@ for (let i = 0; i < treeLength - 1; i++){
 	tree[minInd2].code = '1';
 }
 
-for (let i = 0; i < treeLength; i++){
-	let par = tree[tree[i].parent];
-	while (par.parent != null){
-		tree[i].code = par.code + tree[i].code;
-		par = tree[par.parent];	
+if (treeLength > 1){
+	for (let i = 0; i < treeLength; i++){
+		let par = tree[tree[i].parent];
+		while (par.parent != null){
+			tree[i].code = par.code + tree[i].code;
+			par = tree[par.parent];	
+		}
 	}
+} else {
+	tree[0].code = '0';
 }
 
 for (let i = 0; i < treeLength; i++) 
