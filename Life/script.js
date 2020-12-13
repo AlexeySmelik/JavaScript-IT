@@ -1,91 +1,73 @@
-var canvas = new fabric.Canvas('canvas');
-var size = 40;
-var height = canvas.height / size;
-var width = canvas.width / size;
+var canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
 
-var matrix = new Array(height);
-for (let _ = 0; _ < height; _++)
-    matrix[_] = new Array(width);
+let size = 40; // размер стороны квадрата
+let height = canvas.height / size; 
+let width = canvas.width / size;
 
-for (let i = 0; i < height; i++){
-    for (let j = 0; j < width; j++){
-        let rect = new fabric.Rect({ 
-            left: i * size,
-            top: j * size,
-            backgroundColor: 'black',
-            fill: 'white',
-            width: size,
-            height: size,
-            selectable: false
-        })
-        canvas.add(rect);
-        matrix[i][j] = rect;
+let start_field;
+clean_field();
+
+function clean_field(){
+    start_field = new Array(width);
+    for (let _ = 0; _ < width; _++)
+        start_field[_] = new Array(height).fill(0);
+    draw_field(start_field);
+}
+
+function draw_field(field){
+    for (let i = 0; i < width; i++){
+        for (let j = 0; j < height; j++){
+            ctx.fillStyle = field[i][j] == 0 ? '#FFF' : '#0F0' ;
+            ctx.fillRect(i * size, j * size, size, size);
+            ctx.strokeRect(i * size, j * size, size, size);
+        }
     }
 }
 
-function GetNumberOfNeihbours(x, y){
+function get_number_of_neihbours(x, y, field){
     let counter = 0;
-    for (let i = -1; i < 2; i++){
-        for (let j = -1; j < 2; j++){
-            if (!(i == 0 && j == 0) && matrix[(i + y + height) % height][(j + x + width) % width].fill == 'green')
+    for (let i = -1; i < 2; i++)
+        for (let j = -1; j < 2; j++)
+            if (!(i == 0 && j == 0) && field[(i + x + width) % width][(j + y + height) % height] == 1)
                 counter++;
-        }
-    }
     return counter;
 }
 
-function NextStep(){
-    let pattern = new Array(height);;
-    for (let _ = 0; _ < height; _++)
-        pattern[_] = new Array(width);
+function do_step(){
+    let end_field = new Array(height);
+    for (let _ = 0; _ < width; _++)
+        end_field[_] = new Array(height).fill(0);
 
-    for (let i = 0; i < height; i++){
-        for (let j = 0; j < width; j++){
-            let counterNeighbours = GetNumberOfNeihbours(j, i);
-            if (matrix[i][j].fill == 'white' && counterNeighbours == 3){
-                pattern[i][j] = 1;
-            } else if (matrix[i][j].fill == 'green' && (counterNeighbours == 2 || counterNeighbours == 3)){
-                pattern[i][j] = 1;
-            } else {
-                pattern[i][j] = 0;
-            }
+    for (let i = 0; i < width; i++){
+        for (let j = 0; j < height; j++){
+            let counter_neighbours = get_number_of_neihbours(i, j, start_field);
+            if (start_field[i][j] == 0 && counter_neighbours == 3)
+                end_field[i][j] = 1;
+            else if (start_field[i][j] == 1 && (counter_neighbours == 2 || counter_neighbours == 3))
+                end_field[i][j] = 1;
+            else
+                end_field[i][j] = 0;
         }
     }
-
-    for (let i = 0; i < height; i++){
-        for (let j = 0; j < width; j++){
-            if (pattern[i][j] == 0){
-                matrix[i][j].set('fill', 'white');
-            } else {
-                matrix[i][j].set('fill', 'green');
-            }
-        }
-    }
+    draw_field(end_field);
+    start_field = Array.from(end_field);
 }
 
-function Clear(){
-    for (let i = 0; i < height; i++){
-        for (let j = 0; j < width; j++){
-            window.matrix[i][j].set('fill', 'white');
-        }
-    }
-}
+canvas.addEventListener('mousedown', e => { 
+    let i = ~~(e.offsetX / size);
+    let j = ~~(e.offsetY / size);
+    start_field[i][j] = start_field[i][j] == 1 ? 0 : 1;
+    draw_field(start_field);
+});
 
-function SimpleClicker(elem){
-    elem.style.background = elem.style.background == "red" && document.getElementById("1").style.background != "green" ? "green" : "red";  
-    if (elem.style.background == "green")
-        canvas.on('mouse:down', function(options) {NextStep();});
-    else
-    {
-        document.getElementById("1").style.background = "red";
-        canvas.off();
+let timer;
+function make_timer(el){
+    if (el.value == "Start game"){
+        el.value = "Pause game"
+        timer = setInterval(do_step, 500);
+    } else {
+        el.value = "Start game"
+        clearInterval(timer);
     }
-}
-
-function Edit(elem){
-    elem.style.background = elem.style.background == "red" ? "green" : "red";
-    canvas.on('mouse:down', function(options) {
-        if (options.target)
-            options.target.set('fill', options.target.fill == 'green' ? 'white' : 'green'); 
-    });
 }
