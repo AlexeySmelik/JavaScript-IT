@@ -15,11 +15,11 @@ let m = t.length;
 positions = new Array();
 
 // для эвристики "плохого символа"
-let shift1 = []; // таблица для сдвига по правилу "плохого символа"
+let N = [];
 for (let j = 0; j < m; j++){
-    shift1[t.charAt(j)] = Math.max(m - 2 * j - 1, 1)
+    N[t.charAt(j)] = j + 1;
 }
-
+let shift1 = 0; // для сдвига по правилу "плохого символа"
 
 // для эвристики "хороших суффиксов"
 //                                          65432101234567
@@ -54,20 +54,23 @@ while (index < s.length){
         for (let j = 1; j < m; j++) // посимвольное сравнение справо налево, где j - кол-во совпавших символов
             if (s[index - j] != t[m - 1 - j]){
                 flag = false;
-                if (shift1[s[index - j]] == undefined)
+                if (N[s[index - j]] == undefined)
                     shift = m - j;
-                else
-                    shift = Math.max(shift1[s[index - j]], shift2[j]);
+                else{
+                    shift1 = Math.max(m - N[s[index - j]]- j, 1);
+                    shift = Math.max(shift1, shift2[j]);
+                }
                 break;
             }
         if (flag){
             positions.push(index - m + 1);
             shift = 1;
         }
-    } else if (shift1[s[index]] == undefined){
+    } else if (N[s[index]] == undefined){
         shift = m;
     } else {
-        shift = Math.max(shift1[s[index]], shift2[0]);
+        shift1 = Math.max(m - N[s[index]], 1);
+        shift = Math.max(shift1, shift2[0]);
     }
     index += shift;
 }
