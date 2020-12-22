@@ -1,6 +1,6 @@
 function get_floating_point(num){
     if (not_a_number(num))
-        return "0 11111111 100000000000000000000000"; // not num1 number
+        return "0 11111111 100000000000000000000000"; // not a number
     num *= 1;
     if (num > 2**128 - 2**104){
         return "0 11111111 000000000000000000000000"; // +Infinity
@@ -91,7 +91,6 @@ function sum(num1, num2){
 
     // для денормализованных
     if (float_code1[1] == '00000000' && float_code2[1] == '00000000'){
-        //todo
         let sign;
         let exponent = new Array(8).fill(0);
         let mantissa;
