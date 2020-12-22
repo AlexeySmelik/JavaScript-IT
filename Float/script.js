@@ -127,7 +127,7 @@ function sum(num1, num2){
             mantissa = binary_sum(float_code1[2], float_code2[2]);
             mantissa.pop();
         } else {
-            let flag = true; // флаг для единицы
+            let flag = float_code1[1] == '00000000' ? false : true; // флаг для единицы
             while (parseInt(float_code2[1], 2) > parseInt(float_code1[1], 2)){ // сдвиг второго числа больше сдвига первого
                 float_code1[1] = binary_sum(float_code1[1], '1').join('').substring(1, 9);
                 if (flag){
@@ -138,6 +138,8 @@ function sum(num1, num2){
                 }
                 float_code1[2] = float_code1[2].substring(0, 23);
             }
+            if (float_code2[1] == '00000000') // если меньшее число денормализированное
+                flag = false;
             while (parseInt(float_code1[1], 2) > parseInt(float_code2[1], 2)){ // сдвиг первого числа больше сдвига второго
                 float_code2[1] = binary_sum(float_code2[1], '1').join('').substring(1, 9);
                 if (flag){
@@ -189,7 +191,7 @@ function sum(num1, num2){
                 shift--;
             }
         } else { // если порядки не равны
-            let flag = true; // флаг для единицы
+            let flag = float_code1[1] == '00000000' ? false : true;; // флаг для единицы
             while (parseInt(float_code2[1], 2) > parseInt(float_code1[1], 2)){ // сдвиг второго числа больше сдвига первого
                 float_code1[1] = binary_sum(float_code1[1], '1').join('').substring(1, 9);
                 if (flag){
@@ -219,6 +221,8 @@ function sum(num1, num2){
                     }
                 }
             } else {
+                if (float_code2[1] == '00000000') // если меньшее число денормализированное
+                    flag = false;
                 while (parseInt(float_code1[1], 2) > parseInt(float_code2[1], 2)){ // сдвиг первого числа больше сдвига второго
                     float_code2[1] = binary_sum(float_code2[1], '1').join('').substring(1, 9);
                     if (flag){
@@ -331,7 +335,6 @@ function to_decimal(num){
     return 2**deg * exp;
 }
 
-const { exception } = require("console");
 let fs = require("fs");
 let args = process.argv;
 
