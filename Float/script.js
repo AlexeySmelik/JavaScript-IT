@@ -99,6 +99,7 @@ function sum(num1, num2){
             mantissa = binary_sum(float_code1[2], float_code2[2]);
             if (mantissa[0] == '1'){
                 exponent = binary_sum(float_code1[1], '1');
+                exponent.splice(0, 1);
             }
             mantissa.splice(0, 1);
         } else { // eсли знаки числе НЕ равны
@@ -251,14 +252,25 @@ function sum(num1, num2){
                 }
             }
         }
-        if (parseInt(exponent.join('')) <= 1 && sign == 0){
-            return "0 00000000 000000000000000000000000"; // +0
-        } else if (parseInt(exponent.join('')) <= 1 && sign == 1){
-            return "1 00000000 000000000000000000000000"; // -0
-        }
         return `${sign} ${exponent.join('')} ${mantissa.join('')}`;
     }
 }
+
+// тесты для денормализованных чисел
+// console.log(sum(2**(-128) + 2**(-129), -1 * 2**(-129)));
+// console.log(sum(2**(-126), -1 * 2**(-127)));
+// console.log(sum(2**(-127), 2**(-127)));
+// console.log(sum(2**(-127), -1 * 2**(-127)));
+// тесты для нормализованных чисел
+// console.log(sum(16.1, 3.07), to_decimal(sum(16.1, 3.07)));
+// console.log(sum(220, -1), to_decimal(sum(220, -1)));
+// console.log(sum(2**(150), -1), to_decimal(sum(2**(150), -1)));
+// console.log(sum(-1 * 2**(150), -1), to_decimal(sum(-1 * 2**(150), -1)));
+// console.log(sum('10 негров', 1), to_decimal(sum('10 негров', 1)));
+// console.log(sum(2, -2), to_decimal(sum(2, -2)));
+// console.log(sum(2**(127), 2**(126)), to_decimal(sum(2**(127), 2**(126))));
+// console.log(sum(4125, -125), to_decimal(sum(4125, -125)));
+// console.log(sum(-0.1, -0.1), to_decimal(sum(-0.1, -0.1)));
 
 function binary_sum(num1, num2){
     while (num1.length < num2.length)
